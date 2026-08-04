@@ -118,13 +118,18 @@ func (config *EntityConfig) FixConfig() {
 				config.DeviceClass = SetDefault(config.DeviceClass, "power")
 				config.Icon = SetDefault(config.Icon, "mdi:check-circle-outline")
 
+			case config.Units == "kWp":
+				// Installed/design capacity (kilowatt-peak). HA has no device class
+				// for kWp and rejects kWp together with device_class "power", so
+				// leave the device class unset.
+				config.DeviceClass = SetDefault(config.DeviceClass, "")
+				config.Icon = SetDefault(config.Icon, "mdi:solar-panel-large")
+
 			case config.Value.TypeValue == "Power":
 				fallthrough
 			case config.Units == "MW":
 				fallthrough
 			case config.Units == "kW":
-				fallthrough
-			case config.Units == "kWp":
 				fallthrough
 			case config.Units == "W":
 				config.DeviceClass = SetDefault(config.DeviceClass, "power")
@@ -209,22 +214,21 @@ func (config *EntityConfig) FixConfig() {
 				config.DeviceClass = SetDefault(config.DeviceClass, "distance")
 				config.Icon = SetDefault(config.Icon, "mdi:map-marker-distance")
 
-			case config.Units == "Wh/㎡":
-				fallthrough
 			case config.Units == "W/㎡":
 				fallthrough
 			case config.Units == "W/m2":
-				fallthrough
-			case config.Units == "Wh/m2":
 				config.DeviceClass = SetDefault(config.DeviceClass, "irradiance")
 				config.Icon = SetDefault(config.Icon, "mdi:weather-sunny")
-				// Normalize to HA-recognized units (full-width ㎡ and ASCII 2 are not valid)
-				if config.Units == "W/㎡" || config.Units == "W/m2" {
-					config.Units = "W/m²"
-				}
-				if config.Units == "Wh/㎡" || config.Units == "Wh/m2" {
-					config.Units = "Wh/m²"
-				}
+				config.Units = "W/m²"
+
+			case config.Units == "Wh/㎡":
+				fallthrough
+			case config.Units == "Wh/m2":
+				// HA's irradiance device class only accepts W/m². Wh/m² is an
+				// energy-per-area daily total, so leave the device class unset.
+				config.DeviceClass = SetDefault(config.DeviceClass, "")
+				config.Icon = SetDefault(config.Icon, "mdi:weather-sunny")
+				config.Units = "Wh/m²"
 
 			case config.Value.TypeValue == "Currency":
 				fallthrough
@@ -267,10 +271,12 @@ func (config *EntityConfig) FixConfig() {
 				if config.DeviceClass == "energy" {
 					// HA requires total_increasing for energy sensors (resets are auto-detected).
 					config.StateClass = "total_increasing"
+					config.LastReset = ""
+					config.LastResetValueTemplate = ""
 				} else {
 					config.StateClass = "total"
+					config.LastResetValueTemplate = SetDefault(config.LastResetValueTemplate, "{{ value_json.last_reset | as_datetime }}")
 				}
-				config.LastResetValueTemplate = SetDefault(config.LastResetValueTemplate, "{{ value_json.last_reset | as_datetime }}")
 
 			case config.Point.Is5Minute():
 				fallthrough
@@ -294,10 +300,10 @@ func (config *EntityConfig) FixConfig() {
 				config.LastResetValueTemplate = ""
 		}
 
-		// StateClass measurement requires numeric values. If the value is a string
+		// StateClass implies a numeric value. If the value is a string
 		// (e.g. "Matthew Wilson", "GMT+10", "Residential PV"), clear StateClass
-		// to avoid HA errors about non-numeric values on measurement sensors.
-		if config.StateClass == "measurement" && config.Value != nil && !config.Value.IsFloat() && !config.Value.IsInt() && !config.Value.IsBool() {
+		// to avoid HA errors about non-numeric values on state_class sensors.
+		if config.StateClass != "" && config.Value != nil && !config.Value.IsFloat() && !config.Value.IsInt() && !config.Value.IsBool() {
 			config.StateClass = ""
 		}
 
