@@ -27,6 +27,14 @@ func (c *Config) Json() string {
 	return string(j)
 }
 
+var DeviceGroupLabels = map[string]string{
+	"inverter": "Inverter",
+	"grid":     "Grid",
+	"load":     "Load",
+	"battery":  "Battery",
+	"plant":    "Plant",
+}
+
 func (m *Mqtt) NewDevice(config EntityConfig) (bool, Device) {
 	var ok bool
 	var ret Device
@@ -47,20 +55,43 @@ func (m *Mqtt) NewDevice(config EntityConfig) (bool, Device) {
 			modl = m.DeviceName
 		}
 
+		// Build device key: parent name for "inverter" (default), parent_group for others
+		deviceKey := config.ParentName
+		if config.DeviceGroup != "" && config.DeviceGroup != "inverter" {
+			deviceKey = JoinStringsForId(config.ParentName, config.DeviceGroup)
+		}
+
+		// Return cached device if already created
+		if cached, cachedOk := m.MqttDevices[deviceKey]; cachedOk {
+			return cachedOk, cached
+		}
+
+		// Build device name
+		deviceName := JoinStrings(m.EntityPrefix, config.ParentName, "-", parent.Name)
+		if config.DeviceGroup != "" && config.DeviceGroup != "inverter" {
+			groupLabel := DeviceGroupLabels[config.DeviceGroup]
+			if groupLabel == "" {
+				groupLabel = config.DeviceGroup
+			}
+			deviceName = JoinStrings(m.EntityPrefix, config.ParentName, "-", parent.Name, "-", groupLabel)
+		}
+
 		ret = Device {
 			ConfigurationUrl: parent.ConfigurationUrl,
 			Connections:      [][]string {
 				{ m.EntityPrefix, JoinStringsForId(m.EntityPrefix, config.ParentName) },
-				{ JoinStringsForId(m.EntityPrefix, config.ParentName), JoinStringsForId(m.EntityPrefix, config.ParentId) },
+				{ JoinStringsForId(m.EntityPrefix, config.ParentName), JoinStringsForId(m.EntityPrefix, deviceKey) },
 			},
-			Identifiers:      []string{ JoinStringsForId(m.EntityPrefix, config.ParentId) },
+			Identifiers:      []string{ JoinStringsForId(m.EntityPrefix, deviceKey) },
 			Manufacturer:     manu,
 			Model:            modl,
-			Name:             JoinStrings(m.EntityPrefix, config.ParentName, "-", parent.Name),
+			Name:             deviceName,
 			SuggestedArea:    parent.SuggestedArea,
 			SwVersion:        parent.SwVersion,
 			ViaDevice:        parent.ViaDevice,
 		}
+
+		m.MqttDevices[deviceKey] = ret
 		ok = true
 	}
 

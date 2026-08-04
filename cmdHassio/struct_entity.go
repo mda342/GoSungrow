@@ -36,6 +36,7 @@ type EntityConfig struct {
 
 	EntityCategory    string
 	EnabledByDefault  *bool
+	DeviceGroup       string
 
 	haType        string
 	Options       []string
@@ -333,6 +334,27 @@ func (config *EntityConfig) FixConfig() {
 				fallthrough
 			case config.FullId == "p83004":    // ps_connection
 				config.EntityCategory = SetDefault(config.EntityCategory, "diagnostic")
+		}
+
+		// Classify device group for sub-device routing.
+		// Entities are grouped into logical sub-devices under the parent.
+		if config.DeviceGroup == "" && config.Point != nil {
+			switch config.Point.GroupName {
+				case "MPPT Information":
+					config.DeviceGroup = "inverter"
+				case "Other Information":
+					config.DeviceGroup = "inverter"
+				case "Grid Information":
+					config.DeviceGroup = "grid"
+				case "Load Information":
+					config.DeviceGroup = "load"
+				case "Battery Information":
+					config.DeviceGroup = "battery"
+				case "Overview":
+					config.DeviceGroup = "plant"
+				default:
+					config.DeviceGroup = "inverter"
+			}
 		}
 	}
 }
