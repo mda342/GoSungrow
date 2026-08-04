@@ -34,6 +34,9 @@ type EntityConfig struct {
 
 	IgnoreUpdate  bool
 
+	EntityCategory    string
+	EnabledByDefault  *bool
+
 	haType        string
 	Options       []string
 }
@@ -293,20 +296,40 @@ func (config *EntityConfig) FixConfig() {
 			config.StateClass = ""
 		}
 
-		// if config.LastReset == "" {
-		// 	break
-		// }
-		//
-		// pt := api.GetDevicePoint(config.FullId)
-		// if !pt.Valid {
-		// 	break
-		// }
-		//
-		// config.LastReset = pt.WhenReset()
-		// config.LastResetValueTemplate = SetDefault(config.LastResetValueTemplate, "{{ value_json.last_reset | as_datetime }}")
-		// config.LastResetValueTemplate = SetDefault(config.LastResetValueTemplate, "{{ value_json.last_reset | int | timestamp_local | as_datetime }}")
-		// config.StateClass = "total"
-		// config.StateClass = "measurement"
+		// Classify entity category and enabled_by_default.
+		// Metadata sensors (plant name, timezone, GPS, capacity, etc.) go into
+		// "diagnostic" so they don't clutter the default entity list.
+		falseVal := false
+		switch {
+			// Purely informational metadata — diagnostic and hidden by default
+			case config.FullId == "p80001":    // ps_name
+				fallthrough
+			case config.FullId == "p80003":    // plant_name
+				fallthrough
+			case config.FullId == "p80004":    // location / address
+				fallthrough
+			case config.FullId == "p80009":    // ps_timezone
+				fallthrough
+			case config.FullId == "p13039":    // latitude
+				fallthrough
+			case config.FullId == "p13040":    // longitude
+				fallthrough
+			case config.FullId == "p13013":    // plant_type
+				fallthrough
+			case config.FullId == "p13005":    // connect_type
+				fallthrough
+			case config.FullId == "p13007":    // capacity (MWp — static)
+				config.EntityCategory = SetDefault(config.EntityCategory, "diagnostic")
+				config.EnabledByDefault = &falseVal
+
+			// Operational metadata — diagnostic but visible by default
+			case config.FullId == "p83041":    // ps_status / running state
+				fallthrough
+			case config.FullId == "p83001":    // ps_switch
+				fallthrough
+			case config.FullId == "p83004":    // ps_connection
+				config.EntityCategory = SetDefault(config.EntityCategory, "diagnostic")
+		}
 	}
 }
 

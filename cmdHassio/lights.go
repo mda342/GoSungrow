@@ -29,6 +29,7 @@ func (m *Mqtt) PublishLightConfig(config EntityConfig) error {
 			StateTopic:             String(JoinStringsForTopic(m.Prefix, LabelLight, m.ClientId, id, "state")),
 			UniqueId:               String(id),
 			ObjectId:               String(id),
+			EntityCategory:         String(config.EntityCategory),
 
 			// StateClass:             config.StateClass,
 			// UniqueId:               id,
@@ -44,6 +45,10 @@ func (m *Mqtt) PublishLightConfig(config EntityConfig) error {
 			// LastResetValueTemplate: config.LastResetValueTemplate,
 			StateValueTemplate:     String(config.ValueTemplate),
 			Icon:                   Icon(config.Icon),
+		}
+
+		if config.EnabledByDefault != nil {
+			payload.EnabledByDefault = Boolean(*config.EnabledByDefault)
 		}
 
 		tag := JoinStringsForTopic(m.Prefix, LabelLight, m.ClientId, id, "config")

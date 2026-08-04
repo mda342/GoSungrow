@@ -35,6 +35,7 @@ func (m *Mqtt) SelectPublishConfig(config EntityConfig, fn mqtt.MessageHandler) 
 			CommandTopic:     String(cmdTopic),
 			ObjectId:         String(id),
 			UniqueId:         String(id),
+			EntityCategory:   String(config.EntityCategory),
 			Qos:              0,
 			Retain:           true,
 			EnabledByDefault: true,
@@ -42,6 +43,10 @@ func (m *Mqtt) SelectPublishConfig(config EntityConfig, fn mqtt.MessageHandler) 
 			Options:          config.Options,
 			ValueTemplate:    Template(config.ValueTemplate),
 			Icon:             Icon(config.Icon),
+		}
+
+		if config.EnabledByDefault != nil {
+			payload.EnabledByDefault = Boolean(*config.EnabledByDefault)
 		}
 
 		tag := JoinStringsForTopic(m.Prefix, LabelSelect, m.ClientId, id, "config")

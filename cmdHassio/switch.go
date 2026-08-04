@@ -30,6 +30,7 @@ func (m *Mqtt) SwitchPublishConfig(config EntityConfig) error {
 			CommandTopic: String(JoinStringsForTopic(m.Prefix, LabelSwitch, m.ClientId, id, "cmd")),
 			ObjectId:     String(id),
 			UniqueId:     String(id),
+			EntityCategory: String(config.EntityCategory),
 			Qos:          0,
 			Retain:       true,
 
@@ -39,6 +40,10 @@ func (m *Mqtt) SwitchPublishConfig(config EntityConfig) error {
 			StateOff:      "false",
 			ValueTemplate: String(config.ValueTemplate),
 			Icon:          Icon(config.Icon),
+		}
+
+		if config.EnabledByDefault != nil {
+			payload.EnabledByDefault = Boolean(*config.EnabledByDefault)
 		}
 
 		tag := JoinStringsForTopic(m.Prefix, LabelSwitch, m.ClientId, id, "config")

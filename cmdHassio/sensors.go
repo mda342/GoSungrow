@@ -33,6 +33,7 @@ func (m *Mqtt) SensorPublishConfig(config EntityConfig) error {
 			UniqueId:               String(id),
 			UnitOfMeasurement:      String(config.Units),
 			DeviceClass:            DeviceClass(config.DeviceClass),
+			EntityCategory:         String(config.EntityCategory),
 			Qos:                    0,
 			ForceUpdate:            true,
 			ExpireAfter:            0,
@@ -42,6 +43,10 @@ func (m *Mqtt) SensorPublishConfig(config EntityConfig) error {
 			// LastReset:              config.LastReset,
 			ValueTemplate:          Template(config.ValueTemplate),
 			Icon:                   Icon(config.Icon),
+		}
+
+		if config.EnabledByDefault != nil {
+			payload.EnabledByDefault = Boolean(*config.EnabledByDefault)
 		}
 
 		tag := JoinStringsForTopic(m.Prefix, LabelSensor, m.ClientId, id, "config")

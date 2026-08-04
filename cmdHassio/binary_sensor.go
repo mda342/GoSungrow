@@ -53,6 +53,7 @@ func (m *Mqtt) BinarySensorPublishConfig(config EntityConfig) error {
 			UniqueId:               String(id),
 			// UnitOfMeasurement:      config.Units,
 			DeviceClass:            DeviceClass(config.DeviceClass),
+			EntityCategory:         String(config.EntityCategory),
 			Qos:                    0,
 			ForceUpdate:            true,
 			ExpireAfter:            0,
@@ -73,13 +74,16 @@ func (m *Mqtt) BinarySensorPublishConfig(config EntityConfig) error {
 			// AvailabilityMode:       "",
 			// AvailabilityTemplate:   "",
 			// AvailabilityTopic:      "",
-			// EntityCategory:         "",
 			// JsonAttributesTemplate: "",
 			// JsonAttributesTopic:    "",
 			// ObjectId:               "",
 			// PayloadAvailable:       "",
 			// PayloadNotAvailable:    "",
 			// OffDelay:               0,
+		}
+
+		if config.EnabledByDefault != nil {
+			payload.EnabledByDefault = Boolean(*config.EnabledByDefault)
 		}
 
 		tag := JoinStringsForTopic(m.Prefix, LabelBinarySensor, m.ClientId, id, "config")
