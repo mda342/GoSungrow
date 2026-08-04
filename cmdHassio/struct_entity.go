@@ -167,7 +167,7 @@ func (config *EntityConfig) FixConfig() {
 				fallthrough
 			case config.Units == "℉":
 				config.DeviceClass = SetDefault(config.DeviceClass, "temperature")
-				config.Units = "℉"
+				config.Units = "°F"
 				config.Icon = SetDefault(config.Icon, "mdi:thermometer")
 
 			case config.Units == "°C":
@@ -211,13 +211,17 @@ func (config *EntityConfig) FixConfig() {
 			case config.Units == "Wh/㎡":
 				fallthrough
 			case config.Units == "W/㎡":
+				fallthrough
+			case config.Units == "W/m2":
+				fallthrough
+			case config.Units == "Wh/m2":
 				config.DeviceClass = SetDefault(config.DeviceClass, "irradiance")
 				config.Icon = SetDefault(config.Icon, "mdi:weather-sunny")
-				// Normalize to HA-recognized units (full-width ㎡ is not valid in HA)
-				if config.Units == "W/㎡" {
+				// Normalize to HA-recognized units (full-width ㎡ and ASCII 2 are not valid)
+				if config.Units == "W/㎡" || config.Units == "W/m2" {
 					config.Units = "W/m²"
 				}
-				if config.Units == "Wh/㎡" {
+				if config.Units == "Wh/㎡" || config.Units == "Wh/m2" {
 					config.Units = "Wh/m²"
 				}
 
