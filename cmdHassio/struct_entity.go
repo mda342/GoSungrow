@@ -120,6 +120,8 @@ func (config *EntityConfig) FixConfig() {
 				fallthrough
 			case config.Units == "kW":
 				fallthrough
+			case config.Units == "kWp":
+				fallthrough
 			case config.Units == "W":
 				config.DeviceClass = SetDefault(config.DeviceClass, "power")
 				config.Icon = SetDefault(config.Icon, "mdi:lightning-bolt")
@@ -206,9 +208,15 @@ func (config *EntityConfig) FixConfig() {
 			case config.Units == "Wh/㎡":
 				fallthrough
 			case config.Units == "W/㎡":
-				// @TODO - Not supported in older versions of HA.
 				config.DeviceClass = SetDefault(config.DeviceClass, "irradiance")
 				config.Icon = SetDefault(config.Icon, "mdi:weather-sunny")
+				// Normalize to HA-recognized units (full-width ㎡ is not valid in HA)
+				if config.Units == "W/㎡" {
+					config.Units = "W/m²"
+				}
+				if config.Units == "Wh/㎡" {
+					config.Units = "Wh/m²"
+				}
 
 			case config.Value.TypeValue == "Currency":
 				fallthrough
@@ -230,6 +238,12 @@ func (config *EntityConfig) FixConfig() {
 		}
 
 		switch {
+			case config.DeviceClass == "timestamp":
+				// Timestamp sensors must not have a state_class.
+				config.StateClass = ""
+				config.LastReset = ""
+				config.LastResetValueTemplate = ""
+
 			case config.Point.IsBoot():
 				config.StateClass = "measurement"
 				config.LastReset = ""
@@ -242,9 +256,13 @@ func (config *EntityConfig) FixConfig() {
 			case config.Point.IsYearly():
 				fallthrough
 			case config.Point.IsTotal():
-				config.StateClass = "total"
+				if config.DeviceClass == "energy" {
+					// HA requires total_increasing for energy sensors (resets are auto-detected).
+					config.StateClass = "total_increasing"
+				} else {
+					config.StateClass = "total"
+				}
 				config.LastResetValueTemplate = SetDefault(config.LastResetValueTemplate, "{{ value_json.last_reset | as_datetime }}")
-				// config.LastReset = config.Point.WhenReset(config.Date)
 
 			case config.Point.Is5Minute():
 				fallthrough
@@ -255,9 +273,24 @@ func (config *EntityConfig) FixConfig() {
 			case config.Point.IsInstant():
 				fallthrough
 			default:
-				config.StateClass = "measurement"
+				if config.DeviceClass == "energy" {
+					// Energy sensors with unknown UpdateFreq default to total_increasing (cumulative).
+					config.StateClass = "total_increasing"
+				} else if config.DeviceClass == "timestamp" {
+					// Timestamp sensors must not have a state_class.
+					config.StateClass = ""
+				} else {
+					config.StateClass = "measurement"
+				}
 				config.LastReset = ""
 				config.LastResetValueTemplate = ""
+		}
+
+		// StateClass measurement requires numeric values. If the value is a string
+		// (e.g. "Matthew Wilson", "GMT+10", "Residential PV"), clear StateClass
+		// to avoid HA errors about non-numeric values on measurement sensors.
+		if config.StateClass == "measurement" && config.Value != nil && !config.Value.IsFloat() && !config.Value.IsInt() && !config.Value.IsBool() {
+			config.StateClass = ""
 		}
 
 		// if config.LastReset == "" {
