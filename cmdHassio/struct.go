@@ -233,9 +233,9 @@ func (m *Mqtt) Connect() error {
 			StateTopic:   "~/state",
 			DeviceConfig: DeviceConfig {
 				Identifiers:  []string{"GoSungrow"},
-				SwVersion:    "GoSungrow https://github.com/MickMake/GoSungrow",
+				SwVersion:    "GoSungrow https://github.com/mda342/GoSungrow",
 				Name:         m.ClientId + " Service",
-				Manufacturer: "MickMake",
+				Manufacturer: "mda342",
 				Model:        "SunGrow",
 			},
 		}

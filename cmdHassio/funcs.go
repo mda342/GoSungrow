@@ -75,7 +75,7 @@ func JoinStringsForTopic(args ...string) string {
 // 	// }
 //
 // 	d.Identifiers = []string{"id"}
-// 	d.Manufacturer = "MickMake"
+// 	d.Manufacturer = "mda342"
 // 	d.Model = "NodeID"
 // 	d.Name = "InstanceName"
 // 	d.SwVersion = "SWVersion"

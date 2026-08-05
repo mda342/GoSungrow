@@ -4,7 +4,7 @@ Note: The next major release, (v3.0.x), is here! Check out the [Latest releases 
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/MickMake/GoSungrow.svg)](https://pkg.go.dev/github.com/MickMake/GoSungrow)
 
-Find this useful? [You can support development of this app](https://paypal.me/MickMake)
+Find this useful? [You can support development of this app](https://paypal.me/mda342gh)
 
 ![image](https://github.com/MickMake/GoSungrow/assets/17118367/c015b207-9aed-4aab-b521-57408bba85f5)
 
