@@ -274,8 +274,12 @@ func (config *EntityConfig) FixConfig() {
 					config.LastReset = ""
 					config.LastResetValueTemplate = ""
 				} else {
+					// HA's last_reset_value_template errors when the state payload
+					// has no last_reset key (which it never does here), so emit a
+					// plain total with no last_reset at all.
 					config.StateClass = "total"
-					config.LastResetValueTemplate = SetDefault(config.LastResetValueTemplate, "{{ value_json.last_reset | as_datetime }}")
+					config.LastReset = ""
+					config.LastResetValueTemplate = ""
 				}
 
 			case config.Point.Is5Minute():
