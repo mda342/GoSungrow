@@ -1,6 +1,6 @@
 # GoSungrow - iSolarCloud API written in GoLang.
 
-Note: The next major release, (v3.0.x), is here! Check out the [Latest releases here](https://github.com/MickMake/GoSungrow/releases).
+Note: The next major release, (v3.0.x), is here! Check out the [Latest releases here](https://github.com/mda342/GoSungrow/releases).
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/MickMake/GoSungrow.svg)](https://pkg.go.dev/github.com/MickMake/GoSungrow)
 
@@ -20,30 +20,30 @@ Note:
 - iSolarCloud reached out to me, (based off this GitHub page), to see what can be done about these security issues. So that's a very good thing.
 - As of 1st August 2022 I discovered a number of security holes. At which point I notified AusCert, the vendor and a number of other security companies - hopefully they will get patched because my tool makes it very easy.
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/iSolarCloudLogin.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/iSolarCloudLogin.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/iSolarCloud.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/iSolarCloud.png?raw=true)
 
 I'm currently using it in my [HomeAssistant](https://www.home-assistant.io/) instance.
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/SunGrowOnHASSIO1.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/SunGrowOnHASSIO1.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/SunGrowOnHASSIO2.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/SunGrowOnHASSIO2.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/SunGrowOnHASSIO3.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/SunGrowOnHASSIO3.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/SunGrowOnHASSIO4.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/SunGrowOnHASSIO4.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/SunGrowOnHASSIO5.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/SunGrowOnHASSIO5.png?raw=true)
 
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/Grafana1.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/Grafana1.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/Grafana2.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/Grafana2.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/Grafana3.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/Grafana3.png?raw=true)
 
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/Grafana4.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/Grafana4.png?raw=true)
 
 
 ## What state is it in?
@@ -121,8 +121,8 @@ Token File:	/Users/mick/.GoSungrow/AppService_login.json
 
 ### High level reporting examples.
 For more examples see the EXAMPLES.md and examples.txt files.
-[EXAMPLES.md](https://github.com/MickMake/GoSungrow/blob/master/EXAMPLES.md)
-[examples.txt](https://github.com/MickMake/GoSungrow/blob/master/examples.txt)
+[EXAMPLES.md](https://github.com/mda342/GoSungrow/blob/master/EXAMPLES.md)
+[examples.txt](https://github.com/mda342/GoSungrow/blob/master/examples.txt)
 
 
 Show all devices on your iSolarCloud account.
@@ -231,7 +231,7 @@ Table rows: 25
 Found 1 points.
 Creating graph file 'AppService.queryMutiPointDataList.ResultData.Data-1171348-1171348_22_247_2.p23014.png'
 ```
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1171348-1171348_22_247_2.p23014.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1171348-1171348_22_247_2.p23014.png?raw=true)
 
 
 Get all defined report templates.
@@ -329,11 +329,11 @@ Creating graph file 'AppService.queryMutiPointDataList.ResultData.Data-1129147-1
 Creating graph file 'AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13010.png'
 Creating graph file 'AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13106.png'
 ```
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1171348-1171348_22_247_2.p23014.png?raw=true)
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13002.png?raw=true)
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13008.png?raw=true)
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13139.png?raw=true)
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13162.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1171348-1171348_22_247_2.p23014.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13002.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13008.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13139.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13162.png?raw=true)
 
 
 List all possible devices
@@ -426,7 +426,7 @@ Table rows: 13
 Found 1 points.
 Creating graph file 'AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13007.png'
 ```
-![alt text](https://github.com/MickMake/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13007.png?raw=true)
+![alt text](https://github.com/mda342/GoSungrow/blob/master/docs/AppService.queryMutiPointDataList.ResultData.Data-1129147-1129147_14_1_1.p13007.png?raw=true)
 
 
 ### Using the API instead.
