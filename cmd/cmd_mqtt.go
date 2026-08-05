@@ -24,7 +24,7 @@ import (
 const (
 	DefaultServiceName = "GoSungrow"
 	DefaultServiceArea = "Roof"
-	DefaultVendor      = "MickMake"
+	DefaultVendor      = "mda342"
 	flagMqttUsername   = "mqtt-user"
 	flagMqttPassword   = "mqtt-password"
 	flagMqttHost       = "mqtt-host"

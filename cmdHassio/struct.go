@@ -431,7 +431,7 @@ func (m *Mqtt) SetDeviceConfig(swname string, parentId string, id string, name s
 			Manufacturer: vendor,
 			Model:        model,
 			Name:         name,
-			SwVersion:    swname + " https://github.com/MickMake/" + swname,
+			SwVersion:    swname + " https://github.com/mda342/" + swname,
 			ViaDevice:    swname,
 			SuggestedArea: area,
 		}
