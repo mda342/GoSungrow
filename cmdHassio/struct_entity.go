@@ -305,7 +305,7 @@ func (config *EntityConfig) FixConfig() {
 		}
 
 		// StateClass implies a numeric value. If the value is a string
-		// (e.g. "Matthew Wilson", "GMT+10", "Residential PV"), clear StateClass
+		// (e.g. "John Smith", "GMT+10", "Residential PV"), clear StateClass
 		// to avoid HA errors about non-numeric values on state_class sensors.
 		if config.StateClass != "" && config.Value != nil && !config.Value.IsFloat() && !config.Value.IsInt() && !config.Value.IsBool() {
 			config.StateClass = ""
