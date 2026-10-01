@@ -29,6 +29,7 @@ const (
 	flagMqttPassword   = "mqtt-password"
 	flagMqttHost       = "mqtt-host"
 	flagMqttPort       = "mqtt-port"
+	flagMqttLogLevel   = "log-level"
 )
 
 
@@ -41,6 +42,7 @@ type CmdMqtt struct {
 	Password string
 	Host     string
 	Port     string
+	LogLevel string
 
 	Client         *cmdHassio.Mqtt
 	endpoints      MqttEndPoints
@@ -75,6 +77,18 @@ func NewCmdMqtt(logLevel string) *CmdMqtt {
 	}
 
 	return ret
+}
+
+// SetLogLevel changes the logger level after construction. Needed because the
+// logger is built during init(), before --debug has been parsed.
+func (c *CmdMqtt) SetLogLevel(logLevel string) {
+	for range Only.Once {
+		if c == nil || logLevel == "" {
+			break
+		}
+		c.log.SetLogLevel(logLevel)
+		c.Client.SetHassioLogLevel(logLevel)
+	}
 }
 
 func (c *CmdMqtt) AttachCommand(cmd *cobra.Command) *cobra.Command {
@@ -165,6 +179,8 @@ func (c *CmdMqtt) AttachFlags(cmd *cobra.Command, viper *viper.Viper) {
 		viper.SetDefault(flagMqttHost, "")
 		cmd.PersistentFlags().StringVarP(&c.Port, flagMqttPort, "", "", "HASSIO: mqtt port.")
 		viper.SetDefault(flagMqttPort, "")
+		cmd.PersistentFlags().StringVarP(&c.LogLevel, flagMqttLogLevel, "", "", "Log level: debug, info, warning, error.")
+		viper.SetDefault(flagMqttLogLevel, "")
 	}
 }
 

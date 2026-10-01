@@ -4,6 +4,7 @@ import (
 	"github.com/MickMake/GoSungrow/defaults"
 	"github.com/MickMake/GoUnify/Only"
 	"github.com/MickMake/GoUnify/Unify"
+	"github.com/MickMake/GoUnify/cmdLog"
 	"github.com/spf13/cobra"
 )
 
@@ -109,6 +110,18 @@ func (ca *Cmds) ProcessArgs(_ *cobra.Command, args []string) error {
 		ca.CacheDir = cmds.Unify.GetCacheDir()
 		ca.Debug = cmds.Unify.Flags.Debug
 		ca.Quiet = cmds.Unify.Flags.Quiet
+
+		// --debug is parsed into ca.Debug above, but the subcommand loggers are
+		// built during init() before flags are known. Propagate it now so that
+		// logger.Debug() output is actually emitted. An explicit --log-level
+		// wins over --debug.
+		if ca.Debug || cmds.Mqtt.LogLevel != "" {
+			level := cmds.Mqtt.LogLevel
+			if level == "" {
+				level = cmdLog.LogLevelDebugStr
+			}
+			cmds.Mqtt.SetLogLevel(level)
+		}
 	}
 
 	return ca.Error

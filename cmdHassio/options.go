@@ -30,6 +30,10 @@ func (m *Mqtt) CreateOption(id string, name string, fn mqtt.MessageHandler, opti
 		}
 
 		ec := m.UserOptions.EntityConfig(id)
+		if ec == nil {
+			m.err = errors.New(fmt.Sprintf("mqtt option id '%s' has no config", id))
+			break
+		}
 		m.err = m.SelectPublishConfig(*ec, fn)
 		if m.err != nil {
 			break
@@ -47,6 +51,10 @@ func (m *Mqtt) SetOption(id string, value string) error {
 		}
 
 		ec := m.UserOptions.EntityConfig(id)
+		if ec == nil {
+			m.err = errors.New(fmt.Sprintf("mqtt option id '%s' has no config", id))
+			break
+		}
 		m.err = m.SelectPublishValue(*ec)
 		if m.err != nil {
 			break
@@ -54,6 +62,16 @@ func (m *Mqtt) SetOption(id string, value string) error {
 	}
 
 	return m.err
+}
+
+// SetHassioLogLevel sets the logger used by the cmdHassio package. Separate from
+// the select entity that changes log level at runtime, because the command's
+// logger is created before the Mqtt client exists.
+func (m *Mqtt) SetHassioLogLevel(logLevel string) {
+	if m == nil {
+		return
+	}
+	m.logger.SetLogLevel(logLevel)
 }
 
 func (m *Mqtt) GetOption(id string) string {

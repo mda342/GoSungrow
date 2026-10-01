@@ -3,7 +3,6 @@ package cmdHassio
 import (
 	"encoding/json"
 	"github.com/MickMake/GoUnify/Only"
-	"github.com/MickMake/GoUnify/cmdLog"
 )
 
 
@@ -35,6 +34,13 @@ var DeviceGroupLabels = map[string]string{
 	"plant":    "Plant",
 }
 
+// missingParents records ParentNames that NewDevice could not resolve. Every
+// caller treats ok=false as "skip this entity" and returns no error, so an
+// unregistered parent used to fail completely silently: no discovery payload
+// published, no error set, no trace in the log. Tracked here so the condition
+// is reported once at INFO instead of vanishing.
+var missingParents = map[string]bool{}
+
 func (m *Mqtt) NewDevice(config EntityConfig) (bool, Device) {
 	var ok bool
 	var ret Device
@@ -42,7 +48,11 @@ func (m *Mqtt) NewDevice(config EntityConfig) (bool, Device) {
 	for range Only.Once {
 		var parent Device
 		if parent, ok = m.MqttDevices[config.ParentName]; !ok {
-			cmdLog.LogPrintDate("Unknown parentDevice: %s - will ignore.\n", config.ParentName)
+			if !missingParents[config.ParentName] {
+				missingParents[config.ParentName] = true
+				m.logger.Info("Unknown parentDevice: %s - will ignore. Discovery payload for '%s' not published.\n",
+					config.ParentName, config.FullId)
+			}
 			break
 		}
 
@@ -76,19 +86,34 @@ func (m *Mqtt) NewDevice(config EntityConfig) (bool, Device) {
 			deviceName = JoinStrings(m.EntityPrefix, config.ParentName, "-", parent.Name, "-", groupLabel)
 		}
 
+		// deviceKey == config.ParentName means this device is the parent itself
+		// (empty DeviceGroup, or the "inverter" default). Inheriting the parent's
+		// via_device there would point the device at itself, which Home Assistant
+		// rejects with "A device can not be its own via device". A root device
+		// carries no via_device at all.
+		viaDevice := parent.ViaDevice
+		connections := [][]string{
+			{ m.EntityPrefix, JoinStringsForId(m.EntityPrefix, config.ParentName) },
+		}
+		if deviceKey == config.ParentName {
+			viaDevice = ""
+		} else {
+			connections = append(connections, []string{
+				JoinStringsForId(m.EntityPrefix, config.ParentName),
+				JoinStringsForId(m.EntityPrefix, deviceKey),
+			})
+		}
+
 		ret = Device {
 			ConfigurationUrl: parent.ConfigurationUrl,
-			Connections:      [][]string {
-				{ m.EntityPrefix, JoinStringsForId(m.EntityPrefix, config.ParentName) },
-				{ JoinStringsForId(m.EntityPrefix, config.ParentName), JoinStringsForId(m.EntityPrefix, deviceKey) },
-			},
+			Connections:      connections,
 			Identifiers:      []string{ JoinStringsForId(m.EntityPrefix, deviceKey) },
 			Manufacturer:     manu,
 			Model:            modl,
 			Name:             deviceName,
 			SuggestedArea:    parent.SuggestedArea,
 			SwVersion:        parent.SwVersion,
-			ViaDevice:        parent.ViaDevice,
+			ViaDevice:        viaDevice,
 		}
 
 		m.MqttDevices[deviceKey] = ret
