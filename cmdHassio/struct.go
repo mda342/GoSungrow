@@ -425,6 +425,11 @@ func (m *Mqtt) SetDeviceConfig(swname string, parentId string, id string, name s
 			}
 		}
 
+		viaDevice := ""
+		if swname != parentId {
+			viaDevice = JoinStringsForId(m.EntityPrefix, parentId)
+		}
+
 		ret = Device {
 			Connections:  c,
 			Identifiers:  []string{JoinStringsForId(m.EntityPrefix, id)},
@@ -432,7 +437,7 @@ func (m *Mqtt) SetDeviceConfig(swname string, parentId string, id string, name s
 			Model:        model,
 			Name:         name,
 			SwVersion:    swname + " https://github.com/mda342/" + swname,
-			ViaDevice:    swname,
+			ViaDevice:    viaDevice,
 			SuggestedArea: area,
 		}
 		m.MqttDevices[id] = ret
