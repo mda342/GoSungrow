@@ -423,6 +423,13 @@ func (m *Mqtt) SetDeviceConfig(swname string, parentId string, id string, name s
 			c = [][]string{
 				{parentId, JoinStringsForId(m.EntityPrefix, id)},
 			}
+		} else {
+			// The (swname, parent) pair is the parent's own identity; re-declaring it here
+			// makes HA match this payload to the parent by connection and reject it as
+			// "its own via device". Declare only this device's unique pair.
+			c = [][]string{
+				{JoinStringsForId(m.EntityPrefix, parentId), JoinStringsForId(m.EntityPrefix, id)},
+			}
 		}
 
 		viaDevice := ""
